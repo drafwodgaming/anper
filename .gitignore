@@ -1,0 +1,6 @@
+# robo.js
+.robo/*
+/node_modules
+npm-debug.log*
+.env
+.env*.local

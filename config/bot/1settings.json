@@ -1,0 +1,49 @@
+{
+	"onwerId": "598918368719798296",
+	"infoChannelId": "1031731988471742525",
+	"memberCard": {
+		"leave": "leave.png",
+		"welcome": "welcome.png"
+	},
+
+	"fonts": {
+		"luckiestGuyRegular": {
+			"path": "./assets/fonts/LUCKIESTGUY_REGULAR.ttf",
+			"family": "Luckiest Guy"
+		}
+	},
+
+	"colors": {
+		"canvas": {
+			"white": "rgb(255, 255, 255)",
+			"crimson": "rgb(197, 49, 56)",
+			"green": "rgb(0, 169, 60)",
+			"emerald": "rgb(0, 210, 121)",
+			"bittersweet": "rgb(245, 96, 98);",
+			"raisinBlack": "rgb(29, 30, 34)"
+		},
+		"default": "rgb(255, 255, 255)",
+		"errorRed": "rgb(202, 58, 58);",
+		"succesGreen": "rgb(58, 202, 58)",
+		"editBlue": "rgb(30, 144, 255)",
+		"activity": {
+			"redColor": "rgb(255, 0, 0)",
+			"orangeColor": "rgb(255, 165, 0)",
+			"yellowColor": "rgb(255, 255, 0)",
+			"greenColor": "rgb(0, 255, 0)"
+		},
+		"linksBlue": "rgb(0, 153, 255)",
+		"rules": {
+			"politeColor": "rgb(18, 205, 243)",
+			"noSpamColor": "rgb(18, 134, 243)",
+			"personalDataColor": "rgb(18, 33, 243)",
+			"gameRoleColor": "rgb(108, 18, 243)",
+			"reportToUsColor": "rgb(228, 18, 243)"
+		},
+		"reports": {
+			"bug": "rgb(255, 0, 48)",
+			"suggestion": "rgb(255, 215, 0)",
+			"other": "rgb(138, 43, 226)"
+		}
+	}
+}
