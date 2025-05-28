@@ -27,5 +27,8 @@
 		"mongoose": "^8.14.1",
 		"mustache": "^4.2.0",
 		"robo.js": "^0.10.30"
+	},
+	"overrides": {
+		"undici": "6.21.2"
 	}
 }
