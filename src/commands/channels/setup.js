@@ -1,6 +1,10 @@
-import { ChannelType, ComponentType, PermissionFlagsBits } from 'discord.js'
+import {
+	ActionRowBuilder,
+	ChannelSelectMenuBuilder,
+	ChannelType,
+	PermissionFlagsBits,
+} from 'discord.js'
 import { createCommandConfig } from 'robo.js'
-import { createComponentsFromSchema } from '../../utils/componentBuilder.js'
 import { getLocalizedText } from '../../utils/general/getLocale.js'
 
 export const config = createCommandConfig({
@@ -15,46 +19,37 @@ export const config = createCommandConfig({
 export default async interaction => {
 	const { components: locale } = await getLocalizedText(interaction)
 
-	const channelSchemas = {
-		welcomeChannel: {
-			type: ComponentType.ActionRow,
-			components: [
-				{
-					type: ComponentType.ChannelSelect,
-					custom_id: 'chooseWelcomeChannel',
-					placeholder: locale.menus.welcomeChannelSelect.placeholder,
-					channel_types: [ChannelType.GuildText],
-					max_values: 1,
-				},
-			],
-		},
-		leaveChannel: {
-			type: ComponentType.ActionRow,
-			components: [
-				{
-					type: ComponentType.ChannelSelect,
-					custom_id: 'chooseLeaveChannel',
-					placeholder: locale.menus.leaveChannelSelect.placeholder,
-					channel_types: [ChannelType.GuildText],
-					max_values: 1,
-				},
-			],
-		},
-		voiceHubChannel: {
-			type: ComponentType.ActionRow,
-			components: [
-				{
-					type: ComponentType.ChannelSelect,
-					custom_id: 'chooseVoiceHubChannel',
-					placeholder: locale.menus.JTCSystemChannelSelect.placeholder,
-					channel_types: [ChannelType.GuildVoice],
-					max_values: 1,
-				},
-			],
-		},
-	}
+	// 📦 Вынесенные билдеры для каждого селектора
+	const welcomeChannelSelect = new ChannelSelectMenuBuilder()
+		.setCustomId('chooseWelcomeChannel')
+		.setPlaceholder(locale.menus.welcomeChannelSelect.placeholder)
+		.setChannelTypes(ChannelType.GuildText)
+		.setMaxValues(1)
 
-	const components = createComponentsFromSchema(Object.values(channelSchemas))
+	const leaveChannelSelect = new ChannelSelectMenuBuilder()
+		.setCustomId('chooseLeaveChannel')
+		.setPlaceholder(locale.menus.leaveChannelSelect.placeholder)
+		.setChannelTypes(ChannelType.GuildText)
+		.setMaxValues(1)
+
+	const voiceHubChannelSelect = new ChannelSelectMenuBuilder()
+		.setCustomId('chooseVoiceHubChannel')
+		.setPlaceholder(locale.menus.JTCSystemChannelSelect.placeholder)
+		.setChannelTypes(ChannelType.GuildVoice)
+		.setMaxValues(1)
+
+	// 📐 ActionRow контейнеры
+	const welcomeChannelRow = new ActionRowBuilder().addComponents(
+		welcomeChannelSelect
+	)
+	const leaveChannelRow = new ActionRowBuilder().addComponents(
+		leaveChannelSelect
+	)
+	const voiceHubChannelRow = new ActionRowBuilder().addComponents(
+		voiceHubChannelSelect
+	)
+
+	const components = [welcomeChannelRow, leaveChannelRow, voiceHubChannelRow]
 
 	const description = [
 		locale.setupDescription.title,
