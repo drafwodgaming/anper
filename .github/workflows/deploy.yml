@@ -20,6 +20,6 @@ jobs:
       port: ${{ secrets.VPS_PORT }}
       script: |
        cd ~/home/discordBot
-       docker-compose down
+       docker compose down
        git pull origin main
-       docker-compose up -d --build
+       docker compose up -d --build
