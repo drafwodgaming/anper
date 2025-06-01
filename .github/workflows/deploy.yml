@@ -17,6 +17,7 @@ jobs:
       host: ${{ secrets.VPS_HOST }}
       username: ${{ secrets.VPS_USER }}
       key: ${{ secrets.VPS_SSH }}
+      port: ${{ secrets.VPS_PORT }}
       script: |
        cd ~/home/discordBot
        docker-compose down
