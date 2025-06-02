@@ -1,8 +1,5 @@
-# Используем последнюю версию Node.js
 FROM node:latest
-
 WORKDIR /app
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     make \
@@ -13,9 +10,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgif-dev \
     librsvg2-dev \
  && rm -rf /var/lib/apt/lists/*
-
 COPY package*.json ./
-RUN npm ci --verbose
+RUN npm install
 COPY . .
-
-CMD npm run build && npm run start
+RUN npm run build
+CMD ["npm", "run", "start"]
