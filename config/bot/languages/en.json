@@ -121,6 +121,13 @@
 				"successMessage": "Channel name successfully changed",
 				"exampleName": "Example: Talking",
 				"renameCooldownMessage": "Please wait {{remainingMinutes}} minute(s) before changing the channel name again"
+			},
+			"channelLimit": {
+				"title": "Change User Limit",
+				"label": "Enter the limit",
+				"successMessage": "User limit has been changed",
+				"invalidLimit": "Enter a number from 0 to 99 (0 means unlimited)",
+				"exampleName": "0 (for unlimited)"
 			}
 		}
 	},
@@ -131,12 +138,5 @@
 			"importantInfoDescription": "This is a **temporary** voice channel, which will be deleted if no members are in it.",
 			"permissionsUpdated": "Voice channel was successfully modified"
 		}
-	},
-
-	"logs": {
-		"unhandledRejection": "UNHANDLED PROMISE REJECTION ❯",
-		"uncaughtException": "UNHANDLED_PROMISE EXCEPTION ❯",
-		"succesMongoDBTitle": "[DATABASE STATUS] ❯",
-		"dbConnected": "Connected"
 	}
 }

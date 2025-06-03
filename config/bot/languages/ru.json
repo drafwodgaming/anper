@@ -120,6 +120,13 @@
 				"successMessage": "Имя канала успешно изменено",
 				"exampleName": "Пример: Общение",
 				"renameCooldownMessage": "Пожалуйста, подождите ещё {{remainingMinutes}} минут(ы) перед следующими изменениями имени канала"
+			},
+			"channelLimit": {
+				"title": "Изменить лимит пользователей",
+				"label": "Введите лимит",
+				"successMessage": "Лимит пользователей изменен",
+				"invalidLimit": "Введите число от 0 до 99 (0 — безлимит)",
+				"exampleName": "0 (для безлимита)"
 			}
 		}
 	},
@@ -129,12 +136,6 @@
 			"customizeDescription": "Вы можете изменить различные настройки для вашего канала, используя приведенные ниже опции.\n",
 			"importantInfoDescription": "Это **временный** голосовой канал, который будет удален, если в нем не останется участников.",
 			"permissionsUpdated": "Голосовой канал был успешно изменен"
-		}
-	},
-
-	"logs": {
-		"errors": {
-			"errorCallCommand": "There was an error while executing this command! If this error continues, please contact us!"
 		}
 	},
 	"myServer": {
