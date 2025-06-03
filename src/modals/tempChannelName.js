@@ -41,8 +41,4 @@ export default async interaction => {
 
 	await interaction.channel.setName(channelName)
 	await interaction.editReply(message.successMessage)
-
-	setTimeout(() => {
-		interaction.deleteReply().catch(() => {})
-	}, 1000)
 }
