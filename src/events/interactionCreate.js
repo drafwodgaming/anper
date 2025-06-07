@@ -30,7 +30,7 @@ export default async interaction => {
 					components: interaction.message.components,
 				})
 			} catch {
-				return // 💨 если упало — исчезаем, ничего не делаем
+				return
 			}
 			break
 		}

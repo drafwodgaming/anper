@@ -1,12 +1,11 @@
 import { Profile } from 'discord-arts'
 import { AttachmentBuilder } from 'discord.js'
 import mustache from 'mustache'
-import { createCommandConfig } from 'robo.js'
 import { getStatusText } from '../modules/commands/userinfo/getStatusText.js'
 import { getColor } from '../utils/general/getColor.js'
 import { getLocalizedText } from '../utils/general/getLocale.js'
 
-export const config = createCommandConfig({
+export const config = {
 	description: 'View information about the user',
 	descriptionLocalizations: {
 		ru: 'Показать информацию о пользователе',
@@ -24,7 +23,7 @@ export const config = createCommandConfig({
 			required: false,
 		},
 	],
-})
+}
 
 export default async (interaction, options) => {
 	const locale = await getLocalizedText(interaction)

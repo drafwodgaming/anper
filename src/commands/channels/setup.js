@@ -4,17 +4,16 @@ import {
 	ChannelType,
 	PermissionFlagsBits,
 } from 'discord.js'
-import { createCommandConfig } from 'robo.js'
 import { getLocalizedText } from '../../utils/general/getLocale.js'
 
-export const config = createCommandConfig({
+export const config = {
 	description: 'Channels setup',
 	descriptionLocalizations: {
 		ru: 'Настройка каналов',
 		uk: 'Налаштування каналів',
 	},
 	defaultMemberPermissions: PermissionFlagsBits.Administrator,
-})
+}
 
 export default async interaction => {
 	const { components: locale } = await getLocalizedText(interaction)

@@ -1,12 +1,11 @@
 import { PermissionFlagsBits } from 'discord.js'
 import mustache from 'mustache'
-import { createCommandConfig } from 'robo.js'
 import serverLocaleShema from '../../schemas/serverLocale.js'
 import { getLanguageFlag } from '../../utils/general/getLanguageFlag.js'
 import { getLanguageName } from '../../utils/general/getLanguageName.js'
 import { getLocalizedText } from '../../utils/general/getLocale.js'
 
-export const config = createCommandConfig({
+export const config = {
 	description: 'Set language',
 	descriptionLocalizations: {
 		ru: 'Установить язык для сервера',
@@ -30,7 +29,7 @@ export const config = createCommandConfig({
 			],
 		},
 	],
-})
+}
 
 export default async (interaction, options) => {
 	const { guild } = interaction

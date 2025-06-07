@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 
-export let welcomeChannelSchema = new Schema({
+let welcomeChannelSchema = new Schema({
 	Guild: {
 		type: String,
 		required: true,
