@@ -1,15 +1,15 @@
 import mustache from 'mustache'
-import { createCommandConfig, portal } from 'robo.js'
+import { portal } from 'robo.js'
 import { getLocalizedText } from '../utils/general/getLocale.js'
 
-export const config = createCommandConfig({
+export const config = {
 	description: 'Get the list of commands for the bot',
 	descriptionLocalizations: {
 		ru: 'Отобразить список команд бота',
 		uk: 'Показати список команд бота',
 	},
 	contexts: ['Guild', 'BotDM'],
-})
+}
 
 export default async interaction => {
 	const botCommands = Array.from(portal.commands.entries())

@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 
-export let voiceHubCreatorSchema = new Schema({
+let voiceHubCreatorSchema = new Schema({
 	Guild: {
 		type: String,
 		required: true,

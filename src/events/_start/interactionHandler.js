@@ -1,49 +1,84 @@
-import { readdirSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-const ButtonsDir = path.join(process.cwd(), '.robo', 'build', 'buttons')
-const ModalsDir = path.join(process.cwd(), '.robo', 'build', 'modals')
-const SelectorDir = path.join(process.cwd(), '.robo', 'build', 'selectors')
+const baseDir = path.join(process.cwd(), '.robo', 'build')
 
-export const ButtonHandlers = new Map()
-export const ModalHandlers = new Map()
-export const SelectorHandlers = new Map()
+const handlers = {
+	buttons: {
+		dir: path.join(baseDir, 'buttons'),
+		map: new Map(),
+	},
+	modals: {
+		dir: path.join(baseDir, 'modals'),
+		map: new Map(),
+	},
+	selectors: {
+		dir: path.join(baseDir, 'selectors'),
+		map: new Map(),
+	},
+}
 
-function getAllFiles(dir) {
+function getAllJSFiles(dir) {
 	const files = []
+
+	if (!existsSync(dir)) return files
 
 	for (const entry of readdirSync(dir, { withFileTypes: true })) {
 		const fullPath = path.join(dir, entry.name)
 
-		if (entry.isDirectory()) {
-			files.push(...getAllFiles(fullPath))
-		} else if (entry.isFile() && fullPath.endsWith('.js')) {
-			files.push(fullPath)
-		}
+		if (entry.isDirectory()) files.push(...getAllJSFiles(fullPath))
+		else if (entry.isFile() && fullPath.endsWith('.js')) files.push(fullPath)
 	}
 
 	return files
 }
 
+async function loadHandlers(dir, map, label) {
+	const files = getAllJSFiles(dir)
+	if (!files.length)
+		return {
+			label,
+			results: [`⚠️  Warning: no files found in directory ${label} (${dir})`],
+		}
+
+	const results = []
+
+	await Promise.all(
+		files.map(async file => {
+			const fileUrl = pathToFileURL(file).href
+			const handler = await import(fileUrl)
+
+			if (!handler.customID || typeof handler.default !== 'function') {
+				results.push(
+					`⚠️  File missing (invalid handler): ${handler.customID ?? file}`
+				)
+				return
+			}
+
+			map.set(handler.customID, handler.default)
+			results.push(`✅ ${handler.customID}`)
+		})
+	)
+
+	return { label, results }
+}
+
+export const ButtonHandlers = handlers.buttons.map
+export const ModalHandlers = handlers.modals.map
+export const SelectorHandlers = handlers.selectors.map
+
 export default async () => {
-	await Promise.all([
-		...readdirSync(ButtonsDir).map(async fileName => {
-			const filePath = path.join(ButtonsDir, fileName)
-			const fileURL = pathToFileURL(filePath).href
-			const handler = await import(fileURL)
-			ButtonHandlers.set(handler.customID, handler.default)
-		}),
-		...readdirSync(ModalsDir).map(async fileName => {
-			const filePath = path.join(ModalsDir, fileName)
-			const fileURL = pathToFileURL(filePath).href
-			const handler = await import(fileURL)
-			ModalHandlers.set(handler.customID, handler.default)
-		}),
-		...getAllFiles(SelectorDir).map(async filePath => {
-			const fileURL = pathToFileURL(filePath).href
-			const handler = await import(fileURL)
-			SelectorHandlers.set(handler.customID, handler.default)
-		}),
+	const resultsByGroup = await Promise.all([
+		loadHandlers(handlers.buttons.dir, ButtonHandlers, 'button'),
+		loadHandlers(handlers.modals.dir, ModalHandlers, 'modal'),
+		loadHandlers(handlers.selectors.dir, SelectorHandlers, 'selector'),
 	])
+
+	for (const { label, results } of resultsByGroup) {
+		console.log(`\n📂 [ ${label} ]:`)
+		for (const result of results) {
+			console.log(`  ${result}`)
+		}
+	}
 }

@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 
-export let serverlocaleSchema = new Schema({
+let serverlocaleSchema = new Schema({
 	Guild: {
 		type: String,
 	},

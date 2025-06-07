@@ -1,16 +1,15 @@
 import { ChannelType, bold } from 'discord.js'
 import mustache from 'mustache'
-import { createCommandConfig } from 'robo.js'
 import { getColor } from '../utils/general/getColor.js'
 import { getLocalizedText } from '../utils/general/getLocale.js'
 
-export const config = createCommandConfig({
+export const config = {
 	description: 'View information about the server',
 	descriptionLocalizations: {
 		ru: 'Показать общую информацию о сервере',
 		uk: 'Показати загальну інформацію про сервер',
 	},
-})
+}
 
 export default async interaction => {
 	const locale = await getLocalizedText(interaction)
