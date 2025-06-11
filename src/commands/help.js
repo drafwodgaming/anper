@@ -2,29 +2,28 @@ import { SlashCommandBuilder, bold } from 'discord.js'
 import { getColor } from '../utils/general/getColor.js'
 import { getLocalizedText } from '../utils/general/getLocale.js'
 
-export default {
-	data: new SlashCommandBuilder()
-		.setName('help')
-		.setDescription('Get the list of commands for the bot')
-		.setDescriptionLocalizations({
-			ru: 'Отобразить список команд бота',
-			uk: 'Показати список команд бота',
-		})
-		.setContexts('Guild', 'BotDM'),
-	async execute(interaction, client) {
-		const locale = await getLocalizedText(interaction)
-		const defaultBotColor = getColor('white', '0x')
+export const config = new SlashCommandBuilder()
+	.setName('help')
+	.setDescription('Get the list of commands for the bot')
+	.setDescriptionLocalizations({
+		ru: 'Отобразить список команд бота',
+		uk: 'Показати список команд бота',
+	})
+	.setContexts('Guild', 'BotDM')
 
-		const embed = {
-			color: defaultBotColor,
-			title: locale.commands.help.title,
-			fields: client.commandsArray.map(({ name, description }) => ({
-				name: bold(name),
-				value: description,
-				inline: true,
-			})),
-		}
+export default async (interaction, client) => {
+	const locale = await getLocalizedText(interaction)
+	const defaultBotColor = getColor('white', '0x')
 
-		await interaction.reply({ embeds: [embed], flags: 64 })
-	},
+	const embed = {
+		color: defaultBotColor,
+		title: locale.commands.help.title,
+		fields: client.commandsArray.map(({ name, description }) => ({
+			name: bold(name),
+			value: description,
+			inline: true,
+		})),
+	}
+
+	await interaction.reply({ embeds: [embed], flags: 64 })
 }

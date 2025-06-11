@@ -1,54 +1,44 @@
 import { Events } from 'discord.js'
 
-export default {
-	name: Events.InteractionCreate,
-	async execute(interaction, client) {
-		const { customId } = interaction
-		const { modals, buttons, selectMenus, commands } = client
-		const isChatInputCommand = interaction.isChatInputCommand()
-		const isModalSubmit = interaction.isModalSubmit()
-		const isButton = interaction.isButton()
-		const isStringSelectMenu = interaction.isAnySelectMenu()
+export const event = { name: Events.InteractionCreate }
 
-		switch (true) {
-			case isChatInputCommand: {
-				const command = commands.get(interaction.commandName)
-				if (!command) return
+export default async (interaction, client) => {
+	const { customId } = interaction
+	const { modals, buttons, selectMenus, commands } = client
 
-				await command.execute(interaction, client)
-				break
-			}
+	if (interaction.isChatInputCommand()) {
+		const command = commands.get(interaction.commandName)
+		if (!command) return
+		await command.execute(interaction, client)
+		return
+	}
 
-			case isModalSubmit: {
-				const modal = modals.get(customId)
-				if (modal) await modal.execute(interaction, client)
-				break
-			}
+	if (interaction.isModalSubmit()) {
+		const modal = modals.get(customId)
+		if (modal) await modal(interaction, client)
+		return
+	}
 
-			case isButton: {
-				const button = buttons.get(customId)
-				if (button) await button.execute(interaction, client)
-				break
-			}
+	if (interaction.isButton()) {
+		const button = buttons.get(customId)
+		if (button) await button(interaction, client)
+		return
+	}
 
-			case isStringSelectMenu: {
-				const selectMenu = selectMenus.get(customId)
-				if (selectMenu) await selectMenu.execute(interaction, client)
+	if (interaction.isAnySelectMenu()) {
+		const selectMenu = selectMenus.get(customId)
+		if (selectMenu) await selectMenu(interaction, client)
 
-				for (const row of interaction.message.components) {
-					for (const component of row.components) {
-						component.selected_values = []
-					}
-				}
-				try {
-					await interaction.message.edit({
-						components: interaction.message.components,
-					})
-				} catch {
-					return
-				}
-				break
+		for (const row of interaction.message.components) {
+			for (const component of row.components) {
+				component.selected_values = []
 			}
 		}
-	},
+		try {
+			await interaction.message.edit({
+				components: interaction.message.components,
+			})
+		} catch {}
+		return
+	}
 }

@@ -4,35 +4,34 @@ import serverlocaleSchema from '../schemas/serverLocale.js'
 import voiceHubCreatorSchema from '../schemas/voiceHubCreator.js'
 import welcomeChannelSchema from '../schemas/welcomeChannel.js'
 
-export default {
-	name: Events.GuildDelete,
-	async execute(guild) {
-		console.log(`Left guild ${guild.name} with ${guild.memberCount} members!`)
+export const event = { name: Events.GuildDelete }
 
-		const guildId = guild.id
+export default async guild => {
+	console.log(`Left guild ${guild.name} with ${guild.memberCount} members!`)
 
-		const [voiceHubData, leaveChannelData, serverlocaleData, welcomeChannelData] =
-			await Promise.all([
-				voiceHubCreatorSchema.find({ Guild: guildId }),
-				leaveChannelSchema.find({ Guild: guildId }),
-				serverlocaleSchema.find({ Guild: guildId }),
-				welcomeChannelSchema.find({ Guild: guildId }),
-			])
+	const guildId = guild.id
 
-		if (voiceHubData.length)
-			await voiceHubCreatorSchema.deleteMany({ Guild: guildId })
-		if (leaveChannelData.length)
-			await leaveChannelSchema.deleteMany({ Guild: guildId })
-		if (serverlocaleData.length)
-			await serverlocaleSchema.deleteMany({ Guild: guildId })
-		if (welcomeChannelData.length)
-			await welcomeChannelSchema.deleteMany({ Guild: guildId })
+	const [voiceHubData, leaveChannelData, serverlocaleData, welcomeChannelData] =
+		await Promise.all([
+			voiceHubCreatorSchema.find({ Guild: guildId }),
+			leaveChannelSchema.find({ Guild: guildId }),
+			serverlocaleSchema.find({ Guild: guildId }),
+			welcomeChannelSchema.find({ Guild: guildId }),
+		])
 
-		return {
-			voiceHubData,
-			leaveChannelData,
-			serverlocaleData,
-			welcomeChannelData,
-		}
-	},
+	if (voiceHubData.length)
+		await voiceHubCreatorSchema.deleteMany({ Guild: guildId })
+	if (leaveChannelData.length)
+		await leaveChannelSchema.deleteMany({ Guild: guildId })
+	if (serverlocaleData.length)
+		await serverlocaleSchema.deleteMany({ Guild: guildId })
+	if (welcomeChannelData.length)
+		await welcomeChannelSchema.deleteMany({ Guild: guildId })
+
+	return {
+		voiceHubData,
+		leaveChannelData,
+		serverlocaleData,
+		welcomeChannelData,
+	}
 }

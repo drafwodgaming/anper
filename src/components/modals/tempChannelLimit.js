@@ -1,33 +1,32 @@
 import voiceTempChannelSchema from '../../schemas/voiceTempChannel.js'
 import { getLocalizedText } from '../../utils/general/getLocale.js'
 
-export default {
-	data: { name: 'tempChannelLimit' },
-	async execute(interaction) {
-		await interaction.deferReply({ flags: 64 })
+export const customID = 'tempChannelLimit'
 
-		const locale = await getLocalizedText(interaction)
-		const message = locale.components.modals.channelLimit
+export default async interaction => {
+	await interaction.deferReply({ flags: 64 })
 
-		const limitInput = interaction.fields.getTextInputValue(
-			'tempChannelLimitInput'
-		)
-		const limit = parseInt(limitInput)
+	const locale = await getLocalizedText(interaction)
+	const message = locale.components.modals.channelLimit
 
-		if (isNaN(limit) || limit < 0 || limit > 99)
-			return await interaction.editReply({
-				content: message.invalidLimit,
-			})
+	const limitInput = interaction.fields.getTextInputValue(
+		'tempChannelLimitInput'
+	)
+	const limit = parseInt(limitInput)
 
-		const userLimit = limit === 0 ? 99 : limit
+	if (isNaN(limit) || limit < 0 || limit > 99)
+		return await interaction.editReply({
+			content: message.invalidLimit,
+		})
 
-		await voiceTempChannelSchema.findOneAndUpdate(
-			{ Guild: interaction.guild.id, ChannelId: interaction.channel.id },
-			{ $set: { Limit: userLimit } },
-			{ upsert: true }
-		)
+	const userLimit = limit === 0 ? 99 : limit
 
-		await interaction.channel.setUserLimit(userLimit)
-		await interaction.editReply(message.successMessage)
-	},
+	await voiceTempChannelSchema.findOneAndUpdate(
+		{ Guild: interaction.guild.id, ChannelId: interaction.channel.id },
+		{ $set: { Limit: userLimit } },
+		{ upsert: true }
+	)
+
+	await interaction.channel.setUserLimit(userLimit)
+	await interaction.editReply(message.successMessage)
 }

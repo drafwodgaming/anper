@@ -6,50 +6,49 @@ import {
 } from 'discord.js'
 import { getLocalizedText } from '../../../utils/general/getLocale.js'
 
-export default {
-	data: { name: 'channelSettings' },
-	async execute(interaction) {
-		const locale = await getLocalizedText(interaction)
-		const message = locale.components.modals
+export const customID = 'channelSettings'
 
-		const selectedAction = interaction.values[0]
+export default async interaction => {
+	const locale = await getLocalizedText(interaction)
+	const message = locale.components.modals
 
-		switch (selectedAction) {
-			case 'channelName': {
-				const tempChannelName = new ModalBuilder()
-					.setTitle(message.channelName.title)
-					.setCustomId('tempChannelName')
+	const selectedAction = interaction.values[0]
 
-				const inputField = new TextInputBuilder()
-					.setCustomId('tempChannelNameInput')
-					.setPlaceholder(message.channelName.exampleName)
-					.setLabel(message.channelName.label)
-					.setStyle(TextInputStyle.Short)
-					.setRequired(true)
+	switch (selectedAction) {
+		case 'channelName': {
+			const tempChannelName = new ModalBuilder()
+				.setTitle(message.channelName.title)
+				.setCustomId('tempChannelName')
 
-				const row = new ActionRowBuilder().addComponents(inputField)
-				tempChannelName.addComponents(row)
+			const inputField = new TextInputBuilder()
+				.setCustomId('tempChannelNameInput')
+				.setPlaceholder(message.channelName.exampleName)
+				.setLabel(message.channelName.label)
+				.setStyle(TextInputStyle.Short)
+				.setRequired(true)
 
-				await interaction.showModal(tempChannelName)
-				break
-			}
-			case 'channelLimit': {
-				const limitModal = new ModalBuilder()
-					.setTitle(message.channelLimit.title)
-					.setCustomId('tempChannelLimit')
+			const row = new ActionRowBuilder().addComponents(inputField)
+			tempChannelName.addComponents(row)
 
-				const limitInput = new TextInputBuilder()
-					.setCustomId('tempChannelLimitInput')
-					.setPlaceholder(message.channelLimit.exampleName)
-					.setLabel(message.channelLimit.label)
-					.setStyle(TextInputStyle.Short)
-					.setRequired(true)
-
-				const row = new ActionRowBuilder().addComponents(limitInput)
-				limitModal.addComponents(row)
-
-				await interaction.showModal(limitModal)
-			}
+			await interaction.showModal(tempChannelName)
+			break
 		}
-	},
+		case 'channelLimit': {
+			const limitModal = new ModalBuilder()
+				.setTitle(message.channelLimit.title)
+				.setCustomId('tempChannelLimit')
+
+			const limitInput = new TextInputBuilder()
+				.setCustomId('tempChannelLimitInput')
+				.setPlaceholder(message.channelLimit.exampleName)
+				.setLabel(message.channelLimit.label)
+				.setStyle(TextInputStyle.Short)
+				.setRequired(true)
+
+			const row = new ActionRowBuilder().addComponents(limitInput)
+			limitModal.addComponents(row)
+
+			await interaction.showModal(limitModal)
+		}
+	}
 }

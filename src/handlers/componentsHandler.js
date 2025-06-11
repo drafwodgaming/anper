@@ -25,31 +25,38 @@ export default (client, sourcePath) => {
 			const folderPath = path.join(componentsFolderPath, folder)
 			const componentFiles = getAllJsFiles(folderPath)
 
-			switch (folder) {
-				case 'modals':
-					for (const filePathFull of componentFiles) {
-						const { default: modalComponent } = await import(
-							pathToFileURL(filePathFull).href
-						)
-						modals.set(modalComponent.data.name, modalComponent)
-					}
-					break
-				case 'buttons':
-					for (const filePathFull of componentFiles) {
-						const { default: buttonComponent } = await import(
-							pathToFileURL(filePathFull).href
-						)
-						buttons.set(buttonComponent.data.name, buttonComponent)
-					}
-					break
-				case 'menus':
-					for (const filePathFull of componentFiles) {
-						const { default: menuComponent } = await import(
-							pathToFileURL(filePathFull).href
-						)
-						selectMenus.set(menuComponent.data.name, menuComponent)
-					}
-					break
+			for (const filePathFull of componentFiles) {
+				const componentModule = await import(pathToFileURL(filePathFull).href)
+
+				const id = componentModule.customID
+				const action = componentModule.default
+
+				if (!id) {
+					console.warn(
+						`⚠️ В компоненте ${filePathFull} не найден export const customID`
+					)
+					continue
+				}
+				if (!action) {
+					console.warn(
+						`⚠️ В компоненте ${filePathFull} не найден export default (функция)`
+					)
+					continue
+				}
+
+				switch (folder) {
+					case 'modals':
+						modals.set(id, action)
+						break
+					case 'buttons':
+						buttons.set(id, action)
+						break
+					case 'menus':
+						selectMenus.set(id, action)
+						break
+					default:
+						console.warn(`⚠️ Неизвестная папка компонентов: ${folder}`)
+				}
 			}
 		}
 

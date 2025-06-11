@@ -2,25 +2,24 @@ import { Events } from 'discord.js'
 import leaveChannelSchema from '../schemas/leaveChannel.js'
 import { createLeaveCardMessage } from '../utils/canvas/createLeaveCardMessage.js'
 
-export default {
-	name: Events.GuildMemberAdd,
-	async execute(member) {
-		const { guild, user } = member
-		const { channels } = guild
+export const event = { name: Events.GuildMemberRemove }
 
-		if (user.bot) return
+export default async member => {
+	const { guild, user } = member
+	const { channels } = guild
 
-		const leaveMessageData = await leaveChannelSchema.findOne({
-			Guild: guild.id,
-		})
+	if (user.bot) return
 
-		if (!leaveMessageData) return
+	const leaveMessageData = await leaveChannelSchema.findOne({
+		Guild: guild.id,
+	})
 
-		const interactionChannel = channels.cache.get(leaveMessageData.Channel)
-		if (!interactionChannel) return
+	if (!leaveMessageData) return
 
-		const messageCanvas = await createLeaveCardMessage(member)
+	const interactionChannel = channels.cache.get(leaveMessageData.Channel)
+	if (!interactionChannel) return
 
-		await interactionChannel.send({ files: [messageCanvas] })
-	},
+	const messageCanvas = await createLeaveCardMessage(member)
+
+	await interactionChannel.send({ files: [messageCanvas] })
 }
