@@ -1,46 +1,43 @@
-const { ChannelType, PermissionFlagsBits } = require('discord.js')
+import { ChannelType, PermissionFlagsBits } from 'discord.js'
 
-const createVoiceChannel = async (
-	guild,
-	member,
-	channelName,
-	channelSize = 0,
-	parent
-) => {
-	const memberPermissions = [
-		PermissionFlagsBits.MoveMembers,
-		PermissionFlagsBits.MuteMembers,
-		PermissionFlagsBits.Connect,
-		PermissionFlagsBits.KickMembers,
-		PermissionFlagsBits.Speak,
-		PermissionFlagsBits.SendMessages,
-		PermissionFlagsBits.Stream,
-	]
-
-	const guildPermissions = [
-		PermissionFlagsBits.Speak,
-		PermissionFlagsBits.SendMessages,
-		PermissionFlagsBits.Connect,
-		PermissionFlagsBits.ReadMessageHistory,
-		PermissionFlagsBits.ViewChannel,
-		PermissionFlagsBits.UseVAD,
-		PermissionFlagsBits.Stream,
-	]
+const createVoiceChannel = async (guild, member, parentCategory) => {
+	const permissions = {
+		creator: [
+			PermissionFlagsBits.Connect,
+			PermissionFlagsBits.Speak,
+			PermissionFlagsBits.Stream,
+			PermissionFlagsBits.MuteMembers,
+			PermissionFlagsBits.DeafenMembers,
+			PermissionFlagsBits.MoveMembers,
+			PermissionFlagsBits.ManageChannels,
+			PermissionFlagsBits.PrioritySpeaker,
+			PermissionFlagsBits.UseVAD,
+			PermissionFlagsBits.ViewChannel,
+		],
+		everyone: [
+			PermissionFlagsBits.Connect,
+			PermissionFlagsBits.Speak,
+			PermissionFlagsBits.Stream,
+			PermissionFlagsBits.UseVAD,
+			PermissionFlagsBits.ViewChannel,
+		],
+	}
 
 	const permissionOverwrites = [
-		{ id: member.id, allow: memberPermissions },
-		{ id: member.guild.id, allow: guildPermissions },
+		{ id: member.id, allow: permissions.creator },
+		{ id: guild.id, allow: permissions.everyone },
 	]
 
-	const createdChannel = await guild.channels.create({
-		name: channelName,
+	const channelOptions = {
+		name: `🔊 ${member.displayName}`,
 		type: ChannelType.GuildVoice,
-		parent,
-		userLimit: channelSize,
+		parent: parentCategory,
 		permissionOverwrites,
-	})
+	}
 
-	return createdChannel
+	const channel = await guild.channels.create(channelOptions)
+
+	return channel
 }
 
 export { createVoiceChannel }
