@@ -1,6 +1,7 @@
 {
 	"name": "discordbot",
 	"description": "",
+	"main": "src/bot.js",
 	"version": "1.0.0",
 	"type": "module",
 	"private": true,
@@ -13,21 +14,17 @@
 		"robo.js"
 	],
 	"scripts": {
-		"build": "robo build",
-		"deploy": "robo deploy",
-		"dev": "robox dev",
-		"doctor": "sage doctor",
-		"invite": "robo invite",
-		"start": "robo start",
-		"upgrade": "sage upgrade"
+		"start": "node .",
+		"dev": "nodemon --config nodemon.json ./src/bot.js"
 	},
 	"dependencies": {
 		"@napi-rs/canvas": "^0.1.70",
+		"discord.js": "^14.19.3",
+		"dotenv": "^16.5.0",
 		"mongoose": "^8.14.1",
-		"mustache": "^4.2.0",
-		"robo.js": "^0.10.30"
+		"mustache": "^4.2.0"
 	},
-	"overrides": {
-		"undici": "6.21.2"
+	"devDependencies": {
+		"nodemon": "^3.1.0"
 	}
 }

@@ -1,6 +1,6 @@
-.robo
 package-lock.json
 /node_modules
 npm-debug.log*
 .env
 .env*.local
+nodemon*

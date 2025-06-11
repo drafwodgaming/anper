@@ -1,8 +1,9 @@
 {
 	"code": "en",
 	"commands": {
+		"tag": "Anper Command Interface",
 		"help": {
-			"title": "📜 Commands menu \n\n{{{commandList}}}"
+			"title": "📜 Commands menu"
 		},
 		"language": {
 			"updated": "{{{flag}}} **Language set to {{language}}**"

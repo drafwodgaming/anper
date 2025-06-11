@@ -1,0 +1,58 @@
+import fs from 'fs'
+import path from 'path'
+import { pathToFileURL } from 'url'
+
+function getAllJsFiles(dir) {
+	const entries = fs.readdirSync(dir, { withFileTypes: true })
+	const files = []
+
+	for (const entry of entries) {
+		const fullPath = path.join(dir, entry.name)
+		if (entry.isDirectory()) files.push(...getAllJsFiles(fullPath))
+		else if (entry.isFile() && fullPath.endsWith('.js')) files.push(fullPath)
+	}
+
+	return files
+}
+
+export default (client, sourcePath) => {
+	client.componentsHandler = async () => {
+		const { modals, buttons, selectMenus } = client
+		const componentsFolderPath = path.join(sourcePath, 'components')
+		const componentFolders = fs.readdirSync(componentsFolderPath)
+
+		for (const folder of componentFolders) {
+			const folderPath = path.join(componentsFolderPath, folder)
+			const componentFiles = getAllJsFiles(folderPath)
+
+			switch (folder) {
+				case 'modals':
+					for (const filePathFull of componentFiles) {
+						const { default: modalComponent } = await import(
+							pathToFileURL(filePathFull).href
+						)
+						modals.set(modalComponent.data.name, modalComponent)
+					}
+					break
+				case 'buttons':
+					for (const filePathFull of componentFiles) {
+						const { default: buttonComponent } = await import(
+							pathToFileURL(filePathFull).href
+						)
+						buttons.set(buttonComponent.data.name, buttonComponent)
+					}
+					break
+				case 'menus':
+					for (const filePathFull of componentFiles) {
+						const { default: menuComponent } = await import(
+							pathToFileURL(filePathFull).href
+						)
+						selectMenus.set(menuComponent.data.name, menuComponent)
+					}
+					break
+			}
+		}
+
+		console.log('✅ Loaded components')
+	}
+}
