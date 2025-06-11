@@ -2,45 +2,44 @@ import mustache from 'mustache'
 import voiceTempChannelSchema from '../../schemas/voiceTempChannel.js'
 import { getLocalizedText } from '../../utils/general/getLocale.js'
 
-export default {
-	data: { name: 'tempChannelName' },
-	async execute(interaction) {
-		await interaction.deferReply({ flags: 64 })
+export const customID = 'tempChannelName'
 
-		const locale = await getLocalizedText(interaction)
-		const message = locale.components.modals.channelName
+export default async interaction => {
+	await interaction.deferReply({ flags: 64 })
 
-		const channelName = interaction.fields.getTextInputValue(
-			'tempChannelNameInput'
-		)
+	const locale = await getLocalizedText(interaction)
+	const message = locale.components.modals.channelName
 
-		const currentTime = Date.now()
-		const fiveMinutes = 5 * 60 * 1000
+	const channelName = interaction.fields.getTextInputValue(
+		'tempChannelNameInput'
+	)
 
-		const existingChannel = await voiceTempChannelSchema.findOne({
-			Guild: interaction.guild.id,
-			ChannelId: interaction.channel.id,
-		})
+	const currentTime = Date.now()
+	const fiveMinutes = 5 * 60 * 1000
 
-		if (existingChannel) {
-			if (currentTime - existingChannel.RenameTime < fiveMinutes) {
-				const remainingTime =
-					fiveMinutes - (currentTime - existingChannel.RenameTime)
-				const remainingMinutes = Math.ceil(remainingTime / (60 * 1000))
+	const existingChannel = await voiceTempChannelSchema.findOne({
+		Guild: interaction.guild.id,
+		ChannelId: interaction.channel.id,
+	})
 
-				return await interaction.editReply(
-					mustache.render(message.renameCooldownMessage, { remainingMinutes })
-				)
-			}
+	if (existingChannel) {
+		if (currentTime - existingChannel.RenameTime < fiveMinutes) {
+			const remainingTime =
+				fiveMinutes - (currentTime - existingChannel.RenameTime)
+			const remainingMinutes = Math.ceil(remainingTime / (60 * 1000))
+
+			return await interaction.editReply(
+				mustache.render(message.renameCooldownMessage, { remainingMinutes })
+			)
 		}
+	}
 
-		await voiceTempChannelSchema.findOneAndUpdate(
-			{ Guild: interaction.guild.id, ChannelId: interaction.channel.id },
-			{ $set: { ChannelName: channelName, RenameTime: currentTime } },
-			{ upsert: true }
-		)
+	await voiceTempChannelSchema.findOneAndUpdate(
+		{ Guild: interaction.guild.id, ChannelId: interaction.channel.id },
+		{ $set: { ChannelName: channelName, RenameTime: currentTime } },
+		{ upsert: true }
+	)
 
-		await interaction.channel.setName(channelName)
-		await interaction.editReply(message.successMessage)
-	},
+	await interaction.channel.setName(channelName)
+	await interaction.editReply(message.successMessage)
 }

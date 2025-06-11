@@ -8,38 +8,37 @@ const createEmbed = (color, description) => ({
 	description,
 })
 
-export default {
-	data: { name: 'chooseVoiceHubChannel' },
-	async execute(interaction) {
-		await interaction.deferReply({ flags: 64 })
+export const customID = 'chooseVoiceHubChannel'
 
-		const locale = await getLocalizedText(interaction)
-		const messages = locale.components.menus.JTCSystemChannelSelect
+export default async interaction => {
+	await interaction.deferReply({ flags: 64 })
 
-		const { guild } = interaction
-		const selectedChannelId = interaction.values[0]
+	const locale = await getLocalizedText(interaction)
+	const messages = locale.components.menus.JTCSystemChannelSelect
 
-		const colors = {
-			success: getColor('limeGreen', '0x'),
-			edit: getColor('azure', '0x'),
-			warning: getColor('goldenYellow', '0x'),
-		}
+	const { guild } = interaction
+	const selectedChannelId = interaction.values[0]
 
-		const updateData = await voiceHubCreatorSchema.findOneAndUpdate(
-			{ Guild: guild.id },
-			{ $set: { Channel: selectedChannelId } },
-			{ upsert: true }
-		)
+	const colors = {
+		success: getColor('limeGreen', '0x'),
+		edit: getColor('azure', '0x'),
+		warning: getColor('goldenYellow', '0x'),
+	}
 
-		if (updateData && updateData.Channel === selectedChannelId) {
-			const embedExists = createEmbed(colors.warning, messages.channelAlreadySet)
-			return interaction.editReply({ embeds: [embedExists] })
-		}
+	const updateData = await voiceHubCreatorSchema.findOneAndUpdate(
+		{ Guild: guild.id },
+		{ $set: { Channel: selectedChannelId } },
+		{ upsert: true }
+	)
 
-		const embedSuccess = createEmbed(
-			colors.success,
-			mustache.render(messages.channelSet, { channelId: selectedChannelId })
-		)
-		return interaction.editReply({ embeds: [embedSuccess] })
-	},
+	if (updateData && updateData.Channel === selectedChannelId) {
+		const embedExists = createEmbed(colors.warning, messages.channelAlreadySet)
+		return interaction.editReply({ embeds: [embedExists] })
+	}
+
+	const embedSuccess = createEmbed(
+		colors.success,
+		mustache.render(messages.channelSet, { channelId: selectedChannelId })
+	)
+	return interaction.editReply({ embeds: [embedSuccess] })
 }

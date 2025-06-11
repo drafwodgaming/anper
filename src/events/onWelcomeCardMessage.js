@@ -2,25 +2,24 @@ import { Events } from 'discord.js'
 import welcomeChannelSchema from '../schemas/welcomeChannel.js'
 import { createWelcomeCardMessage } from '../utils/canvas/createWelcomeCardMessage.js'
 
-export default {
-	name: Events.GuildMemberAdd,
-	async execute(member) {
-		const { guild, user } = member
-		const { channels } = guild
+export const event = { name: Events.GuildMemberAdd }
 
-		if (user.bot) return
+export default async member => {
+	const { guild, user } = member
+	const { channels } = guild
 
-		const welcomeMessageData = await welcomeChannelSchema.findOne({
-			Guild: guild.id,
-		})
+	if (user.bot) return
 
-		if (!welcomeMessageData) return
+	const welcomeMessageData = await welcomeChannelSchema.findOne({
+		Guild: guild.id,
+	})
 
-		const interactionChannel = channels.cache.get(welcomeMessageData.Channel)
-		if (!interactionChannel) return
+	if (!welcomeMessageData) return
 
-		const messageCanvas = await createWelcomeCardMessage(member)
+	const interactionChannel = channels.cache.get(welcomeMessageData.Channel)
+	if (!interactionChannel) return
 
-		await interactionChannel.send({ files: [messageCanvas] })
-	},
+	const messageCanvas = await createWelcomeCardMessage(member)
+
+	await interactionChannel.send({ files: [messageCanvas] })
 }

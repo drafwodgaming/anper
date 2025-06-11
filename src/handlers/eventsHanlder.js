@@ -11,9 +11,17 @@ export default (client, sourcePath) => {
 
 		for (const file of eventFiles) {
 			const filePath = path.join(eventsPath, file)
-			const { default: event } = await import(pathToFileURL(filePath).href)
+			const eventModule = await import(pathToFileURL(filePath).href)
 
-			const listener = (...args) => event.execute(...args, client)
+			const { event } = eventModule
+			const execute = eventModule.default
+
+			if (!event || !event.name || typeof execute !== 'function') {
+				console.warn(`⚠️ Event ${file} имеет неправильные экспорты`)
+				continue
+			}
+
+			const listener = (...args) => execute(...args, client)
 
 			if (event.once) {
 				client.once(event.name, listener)

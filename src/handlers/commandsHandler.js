@@ -4,20 +4,35 @@ import { pathToFileURL } from 'url'
 
 export default (client, sourcePath) => {
 	client.commandsHandler = async () => {
-		const { commands, commandsArray } = client
 		const commandsPath = path.join(sourcePath, 'commands')
-		const commandFiles = fs.readdirSync(commandsPath).filter(file => {
-			return !file.startsWith('[off]') && file.endsWith('.js')
-		})
+		const commandFiles = fs
+			.readdirSync(commandsPath)
+			.filter(file => !file.startsWith('[off]') && file.endsWith('.js'))
+
+		const commands = new Map()
+		const commandsArray = []
 
 		for (const file of commandFiles) {
 			const filePath = path.join(commandsPath, file)
-			const { default: command } = await import(pathToFileURL(filePath).href)
+			const commandModule = await import(pathToFileURL(filePath).href)
 
-			commands.set(command.data.name, command)
-			commandsArray.push(command.data.toJSON())
+			if (commandModule.config && commandModule.default) {
+				commands.set(commandModule.config.name, {
+					data: commandModule.config,
+					execute: commandModule.default,
+				})
+
+				commandsArray.push(commandModule.config.toJSON())
+			} else {
+				console.warn(
+					`⚠️ Команда ${file} не имеет корректных экспортов data и default.`
+				)
+			}
 		}
 
-		console.log('✅ Loaded commands')
+		client.commands = commands
+		client.commandsArray = commandsArray
+
+		console.log(`✅ Loaded commands`)
 	}
 }
