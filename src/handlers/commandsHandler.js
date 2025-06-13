@@ -1,38 +1,41 @@
-import fs from 'fs'
+import fg from 'fast-glob'
 import path from 'path'
 import { pathToFileURL } from 'url'
 
 export default (client, sourcePath) => {
 	client.commandsHandler = async () => {
 		const commandsPath = path.join(sourcePath, 'commands')
-		const commandFiles = fs
-			.readdirSync(commandsPath)
-			.filter(file => !file.startsWith('[off]') && file.endsWith('.js'))
+		const files = await fg('**/*.js', {
+			cwd: commandsPath,
+			absolute: true,
+		})
 
 		const commands = new Map()
 		const commandsArray = []
 
-		for (const file of commandFiles) {
-			const filePath = path.join(commandsPath, file)
-			const commandModule = await import(pathToFileURL(filePath).href)
+		for (const file of files) {
+			const module = await import(pathToFileURL(file).href)
 
-			if (commandModule.config && commandModule.default) {
-				commands.set(commandModule.config.name, {
-					data: commandModule.config,
-					execute: commandModule.default,
-				})
+			// Проверка: поддерживается только { default: { config, execute, autocomplete? } }
+			const { config, execute, autocomplete } = module.default
 
-				commandsArray.push(commandModule.config.toJSON())
-			} else {
-				console.warn(
-					`⚠️ Команда ${file} не имеет корректных экспортов data и default.`
-				)
+			if (!config || !execute) {
+				console.warn(`⚠️  Команда в ${file} не содержит config или execute.`)
+				continue
 			}
+
+			// Кладём полную команду
+			commands.set(config.name, { config, execute, autocomplete })
+
+			// Для регистрации в Discord API
+			commandsArray.push(
+				typeof config.toJSON === 'function' ? config.toJSON() : config
+			)
 		}
 
 		client.commands = commands
 		client.commandsArray = commandsArray
 
-		console.log(`✅ Loaded commands`)
+		console.log('✅ Loaded commands')
 	}
 }
