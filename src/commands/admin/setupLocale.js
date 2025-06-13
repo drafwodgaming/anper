@@ -1,9 +1,9 @@
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js'
 import mustache from 'mustache'
-import serverLocaleShema from '../schemas/serverLocale.js'
-import { getLanguageFlag } from '../utils/general/getLanguageFlag.js'
-import { getLanguageName } from '../utils/general/getLanguageName.js'
-import { getLocalizedText } from '../utils/general/getLocale.js'
+import serverLocaleShema from '../../schemas/serverLocale.js'
+import { getLanguageFlag } from '../../utils/general/getLanguageFlag.js'
+import { getLanguageName } from '../../utils/general/getLanguageName.js'
+import { getLocalizedText } from '../../utils/general/getLocale.js'
 
 export const config = new SlashCommandBuilder()
 	.setName('locale')
@@ -39,7 +39,7 @@ export const config = new SlashCommandBuilder()
 	)
 	.setContexts('Guild')
 
-export default async interaction => {
+export async function execute(interaction) {
 	await interaction.deferReply({ flags: 64 })
 	const { guild, options, client } = interaction
 
@@ -58,3 +58,5 @@ export default async interaction => {
 
 	return await interaction.editReply({ content })
 }
+
+export default { config, execute }

@@ -21,8 +21,10 @@
 		"@napi-rs/canvas": "^0.1.70",
 		"discord.js": "^14.19.3",
 		"dotenv": "^16.5.0",
+		"fast-glob": "^3.3.3",
 		"mongoose": "^8.14.1",
-		"mustache": "^4.2.0"
+		"mustache": "^4.2.0",
+		"node-fetch": "^3.3.2"
 	},
 	"devDependencies": {
 		"nodemon": "^3.1.0"

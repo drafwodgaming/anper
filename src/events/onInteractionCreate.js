@@ -6,6 +6,13 @@ export default async (interaction, client) => {
 	const { customId } = interaction
 	const { modals, buttons, selectMenus, commands } = client
 
+	if (interaction.isAutocomplete()) {
+		const command = commands.get(interaction.commandName)
+		if (!command) return
+		await command.autocomplete(interaction, client)
+		return
+	}
+
 	if (interaction.isChatInputCommand()) {
 		const command = commands.get(interaction.commandName)
 		if (!command) return

@@ -5,7 +5,7 @@ import {
 	PermissionFlagsBits,
 	SlashCommandBuilder,
 } from 'discord.js'
-import { getLocalizedText } from '../utils/general/getLocale.js'
+import { getLocalizedText } from '../../utils/general/getLocale.js'
 
 export const config = new SlashCommandBuilder()
 	.setName('channels')
@@ -26,7 +26,7 @@ export const config = new SlashCommandBuilder()
 	)
 	.setContexts('Guild')
 
-export default async interaction => {
+export async function execute(interaction) {
 	await interaction.deferReply({ flags: 64 })
 
 	const subCommand = interaction.options.getSubcommand()
@@ -65,7 +65,10 @@ export default async interaction => {
 					)
 			)
 
-			return interaction.editReply({ content, components })
+			await interaction.editReply({ content, components })
+			break
 		}
 	}
 }
+
+export default { config, execute }

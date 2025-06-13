@@ -12,7 +12,7 @@ export const config = new SlashCommandBuilder()
 	})
 	.setContexts('Guild')
 
-export default async interaction => {
+export async function execute(interaction) {
 	await interaction.deferReply()
 
 	const locale = await getLocalizedText(interaction)
@@ -158,3 +158,5 @@ export default async interaction => {
 
 	return await interaction.editReply({ embeds: [serverInfoEmbed] })
 }
+
+export default { config, execute }
